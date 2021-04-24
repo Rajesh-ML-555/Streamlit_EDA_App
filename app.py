@@ -10,12 +10,29 @@ from streamlit_pandas_profiling import st_profile_report
 
 import sweetviz as sv
 from bs4 import BeautifulSoup
+import sweetviz.sv_html as sv_html
 
 def st_display_sweetviz(report_html, width = 1500, height = 500):
     report_file = codecs.open(report_html, 'r')
     page = report_file.read()
     stc.html(page, width = width, height = height, scrolling = True)
 
+def build_html(self, layout='widescreen', scale=None):
+    scale = float(self.use_config_if_none(scale, "html_scale"))
+    layout = self.use_config_if_none(layout, "html_layout")
+    if layout not in ['widescreen', 'vertical']:
+        raise ValueError(f"'layout' parameter must be either 'widescreen' or 'vertical'")
+    sv_html.load_layout_globals_from_config()
+    self.page_layout = layout
+    self.scale = scale
+    sv_html.set_summary_positions(self)
+    sv_html.generate_html_detail(self)
+    if self.associations_html_source:
+        self.associations_html_source = sv_html.generate_html_associations(self, "source")
+    if self.associations_html_compare:
+        self.associations_html_compare = sv_html.generate_html_associations(self, "compare")
+    self._page_html = sv_html.generate_html_dataframe_page(self)
+        
 footer_temp = """
 	 <!-- CSS  -->
 	  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -55,6 +72,11 @@ footer_temp = """
 	  </footer>
 	"""
 
+@st.cache()
+def load_csv_file(data_file_path):
+	df = pd.read_csv(data_file_path)
+	return df
+
 def main():
     ''' 
     A simple EDA App using Streamlit
@@ -66,28 +88,23 @@ def main():
         st.subheader("EDA with Pandas Profiling")
         data_file = st.file_uploader("Upload a csv file", type = ['csv'])
         if data_file is not None:
-            df = pd.read_csv(data_file)
+            df = load_csv_file(data_file)
             st.dataframe(df.head())
-            profile = ProfileReport(df)
-            st_profile_report(profile)
+            if st.button("Generate Pandas Profiling Report"):
+                profile = ProfileReport(df)
+                st_profile_report(profile)
     
     elif choice == "Sweetviz":
         st.subheader("EDA with Sweetviz")
         data_file = st.file_uploader("Upload a csv file", type = ['csv'])
         if data_file is not None:
-            df = pd.read_csv(data_file)
+            df = load_csv_file(data_file)
             st.dataframe(df.head())
-
             if st.button("Generate Sweetviz Report"):
                 sv_report = sv.analyze(df)
-                # st_profile_report(report)
-                html_sv_rep = get_html(sv_report)
-                # parsed_html = BeautifulSoup(sv_report._page_html)
-                # html_sv_rep = "''"+html_sv_rep+"''"
-                # st.subheader(parsed_html.type())
-                stc.html(html_sv_rep)
-                # report.show_html("sweet_viz_report.html")               
-                # st_display_sweetviz("sweet_viz_report.html")
+                build_html(sv_report)
+                parsed_html = sv_report._page_html
+                stc.html(parsed_html, height = 1500, scrolling = True)
 
 
     elif choice == "About":
@@ -97,8 +114,9 @@ def main():
     else:
         st.subheader("Home")
         html_temp = """
-		<div style="background-color:royalblue;padding:10px;border-radius:10px">
-		<h1 style="color:white;text-align:center;">Simple EDA App with Streamlit Components</h1>
+		<div style="background-color:royalblue;padding:15px;border-radius:10px">
+		<h1 style="color:white;text-align:center;">EDA App by S Rajesh Kumar</h1>
+		<h2 style="color:white;text-align:center;">App consists of Pandas-Profiling and Sweetviz | Upcoming: DTale</h2>
 		</div>
 		"""
 		# components.html("<p style='color:red;'> Streamlit Components is Awesome</p>")
