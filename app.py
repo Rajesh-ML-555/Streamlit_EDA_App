@@ -1,6 +1,5 @@
 import pandas as pd
 import streamlit as st
-import codecs
 
 from pandas_profiling import ProfileReport
 #Compenents packages
@@ -9,13 +8,7 @@ import streamlit.components.v1 as stc
 from streamlit_pandas_profiling import st_profile_report
 
 import sweetviz as sv
-from bs4 import BeautifulSoup
 import sweetviz.sv_html as sv_html
-
-def st_display_sweetviz(report_html, width = 1500, height = 500):
-    report_file = codecs.open(report_html, 'r')
-    page = report_file.read()
-    stc.html(page, width = width, height = height, scrolling = True)
 
 def build_html(self, layout='widescreen', scale=None):
     scale = float(self.use_config_if_none(scale, "html_scale"))
@@ -168,7 +161,7 @@ def main():
 			  width: 100%;
 			  text-align: center;
 			}
-			/* Number text (1/3 etc) */
+			/* Number text (1/4 etc) */
 			.numbertext {
 			  color: #f2f2f2;
 			  font-size: 12px;
@@ -214,18 +207,23 @@ def main():
 			<body>
 			<div class="slideshow-container">
 			<div class="mySlides fade">
-			  <div class="numbertext">1 / 3</div>
-			  <img src="https://www.w3schools.com/howto/img_nature_wide.jpg" style="width:100%">
+			  <div class="numbertext">1 / 4</div>
+			  <img src="https://i.ytimg.com/vi/BoKLMehRahw/maxresdefault.jpg" style="width:100%">
 			  <div class="text">Caption Text</div>
 			</div>
 			<div class="mySlides fade">
-			  <div class="numbertext">2 / 3</div>
-			  <img src="https://www.w3schools.com/howto/img_snow_wide.jpg" style="width:100%">
+			  <div class="numbertext">2 / 4</div>
+			  <img src="https://res.cloudinary.com/practicaldev/image/fetch/s--nutW1iT0--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/i/oyat0fc1lujjztdtx42b.png" style="width:100%">
+			  <div class="text">Caption Text</div>
+			</div>
+			<div class="mySlides fade">
+			  <div class="numbertext">3 / 4</div>
+			  <img src="https://cdn.journaldev.com/wp-content/uploads/2020/11/Pandas-Profiling-in-Python.png" style="width:100%">
 			  <div class="text">Caption Two</div>
 			</div>
 			<div class="mySlides fade">
-			  <div class="numbertext">3 / 3</div>
-			  <img src="https://www.w3schools.com/howto/img_mountains_wide.jpg" style="width:100%">
+			  <div class="numbertext">4 / 4</div>
+			  <img src="https://miro.medium.com/max/875/0*ECp-sidL0e_AwG6G.png" style="width:100%">
 			  <div class="text">Caption Three</div>
 			</div>
 			<a class="prev" onclick="plusSlides(-1)">&#10094;</a>
@@ -236,6 +234,7 @@ def main():
 			  <span class="dot" onclick="currentSlide(1)"></span> 
 			  <span class="dot" onclick="currentSlide(2)"></span> 
 			  <span class="dot" onclick="currentSlide(3)"></span> 
+			  <span class="dot" onclick="currentSlide(4)"></span> 
 			</div>
 			<script>
 			var slideIndex = 1;
